@@ -1,4 +1,4 @@
-#LinkedIn Post Copilot 🚀
+# LinkedIn Post Copilot 🚀
 
 Turn your writing style + trending SaaS topics into viral LinkedIn content using AI.
 
@@ -309,12 +309,3 @@ The AI will create 3 new posts matching your style, incorporating trending topic
 ---
 
 Made with ❤️ for the LinkedIn community
-#   l i n k e d i n c o p i l o t 
- 
- #   l i n k e d i n c o p i l o t 
- 
- #   l i n k e d i n c o p i l o t 
- 
- #   l i n k e d i n c o p i l o t 
- 
- 
