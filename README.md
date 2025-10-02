@@ -1,4 +1,4 @@
-LinkedIn Post Copilot 🚀
+#LinkedIn Post Copilot 🚀
 
 Turn your writing style + trending SaaS topics into viral LinkedIn content using AI.
 
