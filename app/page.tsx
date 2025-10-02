@@ -111,7 +111,10 @@ export default function Home() {
             <Sparkles className="text-blue-600 h-10 w-10" />
           </h1>
           <p className="text-xl text-slate-600 max-w-2xl mx-auto">
-            Turn your style + trending SaaS topics into viral LinkedIn content
+            Turn your style + trending Cloud Automotive SaaS topics into viral LinkedIn content
+          </p>
+          <p className="text-sm text-slate-500 mt-2">
+            Specializing in workshop management, fleet telematics, predictive maintenance & connected vehicles
           </p>
         </div>
 
@@ -140,9 +143,12 @@ export default function Home() {
                     onChange={(e) => setPosts(e.target.value)}
                     className="min-h-[200px] text-base"
                   />
-                  <div className="mt-2 p-3 bg-blue-50 border border-blue-200 rounded-lg">
+                  <div className="mt-2 p-3 bg-blue-50 border border-blue-200 rounded-lg space-y-1">
                     <p className="text-xs text-blue-800">
                       <strong>Format:</strong> Separate posts with numbering: 1--&gt; Post content here 2--&gt; Next post 3--&gt; Another post
+                    </p>
+                    <p className="text-xs text-blue-700">
+                      <strong>Topics covered:</strong> Cloud workshop management, fleet telematics, predictive maintenance, connected vehicles, automotive IoT
                     </p>
                   </div>
                   <p className="text-xs text-slate-500 mt-2">
@@ -245,10 +251,64 @@ export default function Home() {
         )}
 
         {!loading && drafts.length === 0 && (
-          <div className="mt-12 text-center text-slate-500">
-            <p className="text-lg">
-              Enter your posts above and click generate to get started
-            </p>
+          <div className="mt-12 space-y-6">
+            <div className="text-center text-slate-500">
+              <p className="text-lg">
+                Enter your posts above and click generate to get started
+              </p>
+            </div>
+
+            <Card className="bg-gradient-to-br from-blue-50 to-slate-50 border-blue-200">
+              <CardHeader>
+                <CardTitle className="text-lg flex items-center gap-2">
+                  <Sparkles className="h-5 w-5 text-blue-600" />
+                  Setup Instructions
+                </CardTitle>
+              </CardHeader>
+              <CardContent className="space-y-4">
+                <div>
+                  <h3 className="font-semibold text-slate-900 mb-2">1. Get Your API Key</h3>
+                  <p className="text-sm text-slate-700 mb-2">
+                    This app uses Hugging Face (recommended) or Groq for AI generation:
+                  </p>
+                  <ul className="list-disc list-inside text-sm text-slate-600 space-y-1 ml-2">
+                    <li>
+                      <strong>Hugging Face</strong> (Free tier available):
+                      <a href="https://huggingface.co/settings/tokens" target="_blank" rel="noopener noreferrer" className="text-blue-600 hover:underline ml-1">
+                        Get token here
+                      </a>
+                    </li>
+                    <li>
+                      <strong>Groq</strong> (Alternative, also free):
+                      <a href="https://console.groq.com/keys" target="_blank" rel="noopener noreferrer" className="text-blue-600 hover:underline ml-1">
+                        Get key here
+                      </a>
+                    </li>
+                  </ul>
+                </div>
+
+                <div>
+                  <h3 className="font-semibold text-slate-900 mb-2">2. Add to Environment Variables</h3>
+                  <p className="text-sm text-slate-700 mb-2">
+                    Open your <code className="bg-slate-200 px-1 rounded">.env</code> file and add your key:
+                  </p>
+                  <div className="bg-slate-900 text-green-400 p-3 rounded-md text-xs font-mono">
+                    HUGGINGFACE_API_KEY=hf_your_token_here
+                    <br />
+                    <span className="text-slate-500"># or</span>
+                    <br />
+                    GROQ_API_KEY=gsk_your_key_here
+                  </div>
+                </div>
+
+                <div>
+                  <h3 className="font-semibold text-slate-900 mb-2">3. Restart the Development Server</h3>
+                  <p className="text-sm text-slate-700">
+                    The app will automatically detect your API key and start generating posts.
+                  </p>
+                </div>
+              </CardContent>
+            </Card>
           </div>
         )}
       </div>

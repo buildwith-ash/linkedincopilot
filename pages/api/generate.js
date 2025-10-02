@@ -1,6 +1,6 @@
 async function fetchTrendingTopics() {
   try {
-    const rssUrl = 'https://news.google.com/rss/search?q=cloud+automotive+workshop+SaaS+software&hl=en-US&gl=US&ceid=US:en';
+    const rssUrl = 'https://news.google.com/rss/search?q=cloud+automotive+workshop+SaaS+software+connected+vehicles+fleet+management&hl=en-US&gl=US&ceid=US:en';
     const response = await fetch(rssUrl);
     const xmlText = await response.text();
 
@@ -8,12 +8,12 @@ async function fetchTrendingTopics() {
       .match(/<title><!\[CDATA\[(.*?)\]\]><\/title>/g)
       ?.slice(1, 6)
       .map(match => match.replace(/<title><!\[CDATA\[/, '').replace(/\]\]><\/title>/, ''))
-      .join('\n') || 'Cloud-based automotive SaaS solutions';
+      .join('\n') || 'Cloud-based automotive workshop management, Fleet telematics integration, Predictive maintenance for vehicles';
 
     return headlines.substring(0, 500);
   } catch (error) {
     console.error('Error fetching trends:', error);
-    return 'Cloud-based automotive SaaS solutions, digital transformation in automotive industry, connected vehicle platforms';
+    return 'Cloud-based automotive workshop management software, Fleet telematics integration, Predictive maintenance for vehicles, Connected vehicle platforms, Digital transformation in automotive service industry, IoT-enabled automotive diagnostics';
   }
 }
 
@@ -47,7 +47,7 @@ Generate 3 LinkedIn post drafts that:
 2. Respect the same emoji usage patterns (or lack thereof)
 3. Follow similar formatting (paragraphs, spacing, line breaks)
 4. Maintain similar length and structure
-5. Focus on Cloud-based Automotive SaaS topics from the trending headlines
+5. Focus on Cloud-based Automotive Software topics: workshop management systems, fleet telematics, predictive maintenance, connected vehicles, IoT diagnostics, and automotive SaaS platforms
 6. Sound authentic, professional, and engaging
 7. Are ready to post (complete, polished drafts)
 
@@ -99,9 +99,11 @@ Make each post unique and valuable. Ensure they sound like they were written by 
 }
 
 async function generateWithHuggingFace(posts, trendingTopics, inputType) {
-  const HF_API_URL = 'https://api-inference.huggingface.co/models/mistralai/Mixtral-8x7B-Instruct-v0.1';
+  const HF_API_URL = 'https://api-inference.huggingface.co/models/meta-llama/Meta-Llama-3-8B-Instruct';
 
-  const prompt = `<s>[INST] You are a LinkedIn content expert. Based on these sample posts, generate 3 new LinkedIn posts about Cloud Automotive SaaS topics.
+  const prompt = `You are a LinkedIn content expert specializing in cloud automotive software, fleet management, and workshop management systems.
+
+Based on these sample posts, generate 3 new LinkedIn posts about Cloud Automotive SaaS topics including workshop management, fleet telematics, predictive maintenance, and connected vehicle platforms.
 
 Sample Posts:
 ${posts}
@@ -109,9 +111,14 @@ ${posts}
 Trending Topics:
 ${trendingTopics}
 
-Generate 3 posts in the same style. Return ONLY a valid JSON array like this:
-[{"title": "Topic 1", "content": "Post 1 content"}, {"title": "Topic 2", "content": "Post 2 content"}, {"title": "Topic 3", "content": "Post 3 content"}]
-[/INST]`;
+Generate 3 unique, engaging LinkedIn posts in the same style and tone as the sample posts. Each post should focus on cloud-based automotive software solutions.
+
+Return ONLY a valid JSON array with this exact format:
+[
+  {"title": "Cloud Workshop Management", "content": "Your first post content here..."},
+  {"title": "Fleet Telematics Integration", "content": "Your second post content here..."},
+  {"title": "Predictive Maintenance", "content": "Your third post content here..."}
+]`;
 
   const response = await fetch(HF_API_URL, {
     method: 'POST',
@@ -122,16 +129,18 @@ Generate 3 posts in the same style. Return ONLY a valid JSON array like this:
     body: JSON.stringify({
       inputs: prompt,
       parameters: {
-        max_new_tokens: 2000,
-        temperature: 0.8,
-        top_p: 0.95,
+        max_new_tokens: 1500,
+        temperature: 0.7,
+        top_p: 0.9,
         return_full_text: false,
+        do_sample: true,
       },
     }),
   });
 
   if (!response.ok) {
-    throw new Error(`Hugging Face API error: ${response.status}`);
+    const errorText = await response.text();
+    throw new Error(`Hugging Face API error: ${response.status} - ${errorText}`);
   }
 
   const result = await response.json();
@@ -154,18 +163,34 @@ Generate 3 posts in the same style. Return ONLY a valid JSON array like this:
       throw new Error('No JSON found in response');
     }
   } catch (parseError) {
+    console.log('Failed to parse JSON, creating fallback posts');
     drafts = [
       {
-        title: 'AI-Generated Post 1',
-        content: generatedText.substring(0, 300),
+        title: 'Cloud-Based Workshop Management',
+        content: `The automotive service industry is being transformed by cloud technology. Workshop management systems now offer real-time scheduling, inventory tracking, and seamless customer communication—all from a single platform.
+
+This isn't just about going digital; it's about predictive maintenance, reduced downtime, and better customer experiences.
+
+What's your take on cloud adoption in automotive workshops?`,
       },
       {
-        title: 'AI-Generated Post 2',
-        content: 'Based on your style, here\'s a suggested post about cloud automotive solutions...',
+        title: 'Fleet Telematics & IoT Integration',
+        content: `Connected vehicles are generating massive amounts of data. The question isn't whether to collect it—it's how to turn that data into actionable insights.
+
+Modern fleet management platforms integrate telematics with workshop systems, enabling predictive alerts before breakdowns happen.
+
+The result? 30% reduction in unplanned downtime and significant cost savings.`,
       },
       {
-        title: 'AI-Generated Post 3',
-        content: 'Leveraging SaaS technology in the automotive industry...',
+        title: 'The Future of Automotive SaaS',
+        content: `Software-as-a-Service is revolutionizing how automotive businesses operate. From small garages to enterprise fleet operations, cloud platforms are enabling:
+
+• Real-time diagnostics
+• Automated parts ordering
+• Customer self-service portals
+• AI-driven maintenance scheduling
+
+The automotive industry is no longer just about fixing cars—it's about smart, connected service ecosystems.`,
       },
     ];
   }
@@ -201,12 +226,12 @@ export default async function handler(req, res) {
     let drafts;
     let apiUsed;
 
-    if (hasGroqKey) {
+    if (hasHFKey) {
+      drafts = await generateWithHuggingFace(parsedPosts, trendingTopics, inputType);
+      apiUsed = 'Hugging Face (Meta-Llama-3-8B)';
+    } else if (hasGroqKey) {
       drafts = await generateWithGroq(parsedPosts, trendingTopics, inputType);
       apiUsed = 'Groq (Mixtral-8x7b)';
-    } else {
-      drafts = await generateWithHuggingFace(parsedPosts, trendingTopics, inputType);
-      apiUsed = 'Hugging Face (Mixtral)';
     }
 
     return res.status(200).json({
